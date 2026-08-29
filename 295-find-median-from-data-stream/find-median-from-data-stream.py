@@ -1,0 +1,33 @@
+import heapq
+
+class MedianFinder(object):
+
+    def __init__(self):
+        self.max_heap = []
+        self.min_heap = []
+
+    def addNum(self, num):
+        # Step 1: Always push to max_heap first
+        heapq.heappush(self.max_heap, -num)
+        
+        # Step 2: Balance check
+        if self.max_heap and self.min_heap and (-self.max_heap[0] > self.min_heap[0]):
+            val = -heapq.heappop(self.max_heap)
+            heapq.heappush(self.min_heap, val)
+            
+        # Step 3: Size check
+        if len(self.max_heap) > len(self.min_heap) + 1:
+            val = -heapq.heappop(self.max_heap)
+            heapq.heappush(self.min_heap, val)
+        elif len(self.min_heap) > len(self.max_heap) + 1:
+            val = heapq.heappop(self.min_heap)
+            heapq.heappush(self.max_heap, -val)
+
+    def findMedian(self):
+        if len(self.max_heap) > len(self.min_heap):
+            return float(-self.max_heap[0])
+        elif len(self.min_heap) > len(self.max_heap):
+            return float(self.min_heap[0])
+        
+        # In Python 2, float conversion ensures we don't do integer division
+        return (-self.max_heap[0] + self.min_heap[0]) / 2.0
